@@ -11,6 +11,24 @@ const Orders = () => {
          .then(res => res.json())
          .then(data => setOrders(data))
    }, [user?.email])
+
+   const handleDelete = (id) => {
+      const proceed = window.confirm('Are you sure want to cancel your order')
+      if (proceed) {
+         fetch(`http://localhost:5000/services/${id}`, {
+            method: 'DELETE',
+         })
+            .then(res => res.json())
+            .then(data => {
+               console.log(data);
+               if (data.deletedCount > 0) {
+                  alert('deleted Successfully')
+                  const remaining = orders.filter(odr => odr._id !== id);
+                  setOrders(remaining)
+               }
+            })
+      }
+   }
    return (
       <div className="overflow-x-auto w-full">
          <table className="table w-full">
@@ -32,6 +50,7 @@ const Orders = () => {
                   orders.map(order => <OrderRow
                      key={order._id}
                      order={order}
+                     handleDelete={handleDelete}
                   ></OrderRow>)
                }
             </tbody>
