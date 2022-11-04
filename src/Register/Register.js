@@ -1,50 +1,43 @@
-import { GoogleAuthProvider } from 'firebase/auth';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../assets/AuthProvider/AuthProvider';
-
-const Login = () => {
-   const { login, signInGoogle, googleProvider } = useContext(AuthContext)
+import { AuthContext } from '../assets/AuthProvider/AuthProvider';
 
 
-   const gppgleProvider = new GoogleAuthProvider()
-   const handleGoogleSignIn = () => {
-      signInGoogle(googleProvider)
-         .then(res => {
-            const user = res.user;
-            console.log(user)
-         })
-         .then(error => {
-            console.error(error);
-         })
-   }
-
-
-   const handleLogin = event => {
+const Register = () => {
+   const { createUser } = useContext(AuthContext)
+   const handleRegister = event => {
       event.preventDefault()
       const form = event.target;
+      const name = form.name.value
       const email = form.email.value;
       const password = form.password.value;
-      login(email, password)
+
+      createUser(email, password)
          .then(res => {
-            const user = res.user;
+            const user = res.user
             console.log(user);
+            form.reset()
          })
-         .catch(e => {
-            console.error(e);
-         })
+         .catch(e => console.error(e))
    }
 
+
    return (
-      <div className="hero w-full my-20 ">
+      <div className='hero w-full my-20'>
          <div className="hero-content grid gap-10 md:grid-cols-2 flex-col lg:flex-row">
             <div className="text-center lg:text-left">
                <img src='https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg?w=2000' alt="" />
             </div>
             <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-               <form onSubmit={handleLogin} className="card-body">
-                  <h1 className="text-5xl text-center font-bold">Login</h1>
+               <form onSubmit={handleRegister} className="card-body">
+                  <h1 className="text-5xl text-center font-bold">Sign Up</h1>
 
+                  <div className="form-control">
+                     <label className="label">
+                        <span className="label-text">Full Name</span>
+                     </label>
+                     <input type="text" name='name' placeholder="Your name" className="input input-bordered" />
+                  </div>
                   <div className="form-control">
                      <label className="label">
                         <span className="label-text">Email</span>
@@ -61,16 +54,15 @@ const Login = () => {
                      </label>
                   </div>
                   <div className="form-control mt-6">
-                     <input className="btn btn-primary" type="submit" value="Login" />
-
+                     <input className="btn btn-primary" type="submit" value="Sign Up" />
                   </div>
-                  <p >Don't have an account? <Link className='' to='/register'><button className='btn btn-link '>Sign Up</button></Link></p>
+                  <p>Already have an account? <Link className='text-orange-600' to='/login'><button className='btn btn-link'>Log In</button></Link></p>
+
                </form>
-               <button className='btn btn-primary' onClick={handleGoogleSignIn}>G SignIn</button>
             </div>
          </div>
       </div>
    );
 };
 
-export default Login;
+export default Register;
