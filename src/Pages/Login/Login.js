@@ -1,15 +1,12 @@
-import { GoogleAuthProvider } from 'firebase/auth';
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../assets/AuthProvider/AuthProvider';
 
 const Login = () => {
-   const { login, signInGoogle, googleProvider } = useContext(AuthContext)
+   const { login, signInGoogle } = useContext(AuthContext)
 
-
-   const gppgleProvider = new GoogleAuthProvider()
    const handleGoogleSignIn = () => {
-      signInGoogle(googleProvider)
+      signInGoogle()
          .then(res => {
             const user = res.user;
             console.log(user)

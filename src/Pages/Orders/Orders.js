@@ -15,7 +15,7 @@ const Orders = () => {
    const handleDelete = (id) => {
       const proceed = window.confirm('Are you sure want to cancel your order')
       if (proceed) {
-         fetch(`http://localhost:5000/services/${id}`, {
+         fetch(`http://localhost:5000/orders/${id}`, {
             method: 'DELETE',
          })
             .then(res => res.json())
@@ -29,32 +29,56 @@ const Orders = () => {
             })
       }
    }
+   const handleStatusUpdate = id => {
+      fetch(`http://localhost:5000/orders/${id}`, {
+         method: 'PATCH',
+         headers: {
+            'content-type': 'application/json'
+         },
+         body: JSON.stringify({ status: 'Approved' })
+      })
+         .then(res => res.json())
+         .then(data => {
+            console.log(data)
+            if (data.modifiedCount > 0) {
+               const remaining = orders.filter(odr => odr._id !== id)
+               const approving = orders.find(odr => odr._id === id);
+               approving.status = 'Approved'
+               const newOrders = [approving, ...remaining];
+               setOrders(newOrders)
+            }
+         })
+
+   }
+
    return (
-      <div className="overflow-x-auto w-full">
-         <table className="table w-full">
-            <thead>
-               <tr>
-                  <th>
-                     <label>
-                        <input type="checkbox" className="checkbox" />
-                     </label>
-                  </th>
-                  <th>Name</th>
-                  <th>Job</th>
-                  <th>Favorite Color</th>
-                  <th></th>
-               </tr>
-            </thead>
-            <tbody>
-               {
-                  orders.map(order => <OrderRow
-                     key={order._id}
-                     order={order}
-                     handleDelete={handleDelete}
-                  ></OrderRow>)
-               }
-            </tbody>
-         </table>
+
+      <div className='my-10'>
+         <h1 className='text-center text-4xl font-semibold my-10'>You Have {orders.length} Orders,</h1>
+         <div className="overflow-x-auto w-full">
+            <table className="table w-full">
+               <thead>
+                  <tr>
+                     <th>Delete</th>
+                     <th>Name</th>
+                     <th>Job</th>
+                     <th>Favorite Color</th>
+                     <th>Order Details</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {
+                     orders.map(order => <OrderRow
+                        key={order._id}
+                        order={order}
+                        handleDelete={handleDelete}
+                        handleStatusUpdate={handleStatusUpdate}
+
+                     ></OrderRow>)
+                  }
+               </tbody>
+            </table>
+         </div>
       </div>
    );
 };
